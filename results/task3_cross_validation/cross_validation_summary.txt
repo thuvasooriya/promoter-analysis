@@ -1,0 +1,28 @@
+TASK 3: CROSS-VALIDATION RESULTS
+============================================================
+Testing 210657G's PPM on other students' genomes
+
+210079K (GCA_001457635.1):
+  Regions tested: 1100
+  Promoters detected: 413
+  Detection rate: 37.55%
+
+210179R (GCA_019048645.1):
+  Regions tested: 1100
+  Promoters detected: 465
+  Detection rate: 42.27%
+
+210504L (GCA_900636475.1):
+  Regions tested: 1100
+  Promoters detected: 425
+  Detection rate: 38.64%
+
+210707L (GCA_900475505.1):
+  Regions tested: 1099
+  Promoters detected: 356
+  Detection rate: 32.39%
+
+210732H (GCA_019046945.1):
+  Regions tested: 1100
+  Promoters detected: 445
+  Detection rate: 40.45%

@@ -1,0 +1,12 @@
+{
+  "student_id": "210657G",
+  "genome_id": "GCA_900637025.1",
+  "genome_length": 1931548,
+  "total_genes": 1100,
+  "upstream_regions": 1100,
+  "valid_regions": 1100,
+  "training_size": 100,
+  "promoters_found": 99,
+  "consensus_sequence": "TATAAT",
+  "consensus_score": -3.1437139554641838
+}
