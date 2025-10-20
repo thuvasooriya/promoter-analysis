@@ -22,6 +22,10 @@ task-3: setup
 all: setup
     uv run python src/main.py --task all
 
+# generate visualizations
+visualize:
+    uv run python src/visualizations.py
+
 # clean up generated files
 clean:
     rm -rf results/*
@@ -32,7 +36,7 @@ clean:
 # check data structure
 check-data:
     @echo "checking data structure..."
-    @ls -la data/raw/
+    @ls -la data/
     @echo ""
     @echo "checking student data directories:"
-    @find data/raw -maxdepth 2 -type d -name "*_GCA_*"
+    @find data -maxdepth 2 -type d -name "*_GCA_*"

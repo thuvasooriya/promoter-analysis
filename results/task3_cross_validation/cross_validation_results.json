@@ -1,60 +1,60 @@
 {
   "210079K": {
     "genome_id": "GCA_001457635.1",
-    "total_regions_tested": 1100,
-    "promoters_detected": 413,
-    "detection_rate": 0.37545454545454543,
+    "total_regions_tested": 1000,
+    "promoters_detected": 378,
+    "detection_rate": 0.378,
     "score_statistics": {
-      "mean": -15.05861791737122,
-      "std": 7.841964762926384,
+      "mean": -15.037768453724016,
+      "std": 7.917857652694292,
       "max": 0.0,
       "min": -43.411016806246174
     }
   },
   "210179R": {
     "genome_id": "GCA_019048645.1",
-    "total_regions_tested": 1100,
-    "promoters_detected": 465,
-    "detection_rate": 0.42272727272727273,
+    "total_regions_tested": 1000,
+    "promoters_detected": 425,
+    "detection_rate": 0.425,
     "score_statistics": {
-      "mean": -13.964716479457241,
-      "std": 7.661049317941578,
+      "mean": -14.016768722904152,
+      "std": 7.55034633398826,
       "max": 0.0,
       "min": -43.54204506865258
     }
   },
   "210504L": {
     "genome_id": "GCA_900636475.1",
-    "total_regions_tested": 1100,
-    "promoters_detected": 425,
-    "detection_rate": 0.38636363636363635,
+    "total_regions_tested": 1000,
+    "promoters_detected": 388,
+    "detection_rate": 0.388,
     "score_statistics": {
-      "mean": -14.778895822853965,
-      "std": 7.558841721362019,
+      "mean": -14.721457733627416,
+      "std": 7.51910855010814,
       "max": 0.0,
       "min": -35.1949287076129
     }
   },
   "210707L": {
     "genome_id": "GCA_900475505.1",
-    "total_regions_tested": 1099,
-    "promoters_detected": 356,
-    "detection_rate": 0.32393084622383983,
+    "total_regions_tested": 999,
+    "promoters_detected": 313,
+    "detection_rate": 0.3133133133133133,
     "score_statistics": {
-      "mean": -15.66351378347194,
-      "std": 7.6008829151142026,
+      "mean": -15.759741818470584,
+      "std": 7.473350406037864,
       "max": 0.0,
       "min": -43.19138819703941
     }
   },
   "210732H": {
     "genome_id": "GCA_019046945.1",
-    "total_regions_tested": 1100,
-    "promoters_detected": 445,
-    "detection_rate": 0.40454545454545454,
+    "total_regions_tested": 1000,
+    "promoters_detected": 401,
+    "detection_rate": 0.401,
     "score_statistics": {
-      "mean": -14.487917714655657,
-      "std": 7.762654911486069,
+      "mean": -14.561971508405664,
+      "std": 7.707594542466749,
       "max": 0.0,
       "min": -43.411016806246174
     }

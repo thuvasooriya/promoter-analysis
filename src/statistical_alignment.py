@@ -15,7 +15,7 @@ class StatisticalAligner:
         self.ppm_df = ppm_df
         self.ppm_length = len(ppm_df)
         self.consensus_score = self._calculate_consensus_score()
-        self.threshold = -10.0  # Default threshold
+        self.threshold = -10.0
         logging.info(
             f"Initialized StatisticalAligner with PPM of length {self.ppm_length}"
         )
@@ -51,20 +51,12 @@ class StatisticalAligner:
         if len(sequence) < self.ppm_length:
             return results
 
-        # Slide PPM-length window across sequence
         for i in range(len(sequence) - self.ppm_length + 1):
             subseq = sequence[i : i + self.ppm_length]
             score = self.score_sequence(subseq)
             normalized_score = score - self.consensus_score
 
-            results.append(
-                {
-                    "position": i,
-                    "sequence": subseq,
-                    "raw_score": score,
-                    "normalized_score": normalized_score,
-                }
-            )
+            results.append({"position": i, "sequence": subseq, "score": normalized_score})
 
         return results
 
@@ -94,7 +86,6 @@ class StatisticalAligner:
                 continue
 
             if len(sequence) == self.ppm_length:
-                # Exact match - no sliding window needed
                 score = self.score_sequence(sequence)
                 normalized_score = score - self.consensus_score
 
@@ -109,25 +100,19 @@ class StatisticalAligner:
                     }
                 )
             else:
-                # Sliding window analysis for longer sequences
                 window_results = self.sliding_window_analysis(sequence)
 
                 if window_results:
-                    # Find best scoring window
-                    best_result = max(
-                        window_results, key=lambda x: x["normalized_score"]
-                    )
+                    best_result = max(window_results, key=lambda x: x["score"])
 
                     results.append(
                         {
                             "gene_id": region["gene_id"],
                             "upstream_sequence": sequence,
-                            "best_score": best_result["normalized_score"],
+                            "best_score": best_result["score"],
                             "best_position": best_result["position"],
                             "best_subsequence": best_result["sequence"],
-                            "has_promoter": best_result["normalized_score"]
-                            > self.threshold,
-                            "all_windows": window_results,
+                            "has_promoter": best_result["score"] > self.threshold,
                         }
                     )
 

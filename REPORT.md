@@ -98,6 +98,8 @@ Applied 210657G's PPM to all 1100 upstream regions from:
 - Promoters extracted: 99 (one sequence rejected)
 - All sequences: 100% AT-rich (6 consecutive Ws confirmed)
 
+![Training Data Analysis](results/figures/training_data_analysis.png)
+
 **Consensus Sequence:** TATAAT
 
 **Position Probability Matrix:**
@@ -175,24 +177,24 @@ This confirms -10 box location hypothesis.
 
 | Student | Genome          | Regions | Detected | Rate   |
 | ------- | --------------- | ------- | -------- | ------ |
-| 210079K | GCA_001457635.1 | 1100    | 413      | 37.55% |
-| 210179R | GCA_019048645.1 | 1100    | 465      | 42.27% |
-| 210504L | GCA_900636475.1 | 1100    | 425      | 38.64% |
-| 210707L | GCA_900475505.1 | 1099    | 356      | 32.39% |
-| 210732H | GCA_019046945.1 | 1100    | 445      | 40.45% |
+| 210079K | GCA_001457635.1 | 1000    | 378      | 37.80% |
+| 210179R | GCA_019048645.1 | 1000    | 425      | 42.50% |
+| 210504L | GCA_900636475.1 | 1000    | 388      | 38.80% |
+| 210707L | GCA_900475505.1 | 999     | 313      | 31.33% |
+| 210732H | GCA_019046945.1 | 1000    | 401      | 40.10% |
 
 **Cross-Validation Statistics:**
 
-- Mean detection rate: 38.26%
-- Standard deviation: 3.32%
-- Range: 32.39% - 42.27%
+- Mean detection rate: 38.11%
+- Standard deviation: 4.18%
+- Range: 31.33% - 42.50%
 - Own genome (210657G): 39.9%
 
 ![Cross-Validation Comparison](results/figures/cross_validation_comparison.png)
 
 **Interpretation:**
 
-Consistent detection rates across diverse bacterial genomes (CV = 8.7%) demonstrate:
+Consistent detection rates across diverse bacterial genomes (CV = 11.0%) demonstrate:
 
 1. Strong model generalizability
 2. Conserved σ⁷⁰-dependent promoter architecture across species

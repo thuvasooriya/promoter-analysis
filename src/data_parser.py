@@ -10,13 +10,6 @@ from pathlib import Path
 import numpy as np
 from Bio import SeqIO
 
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("logs/analysis.log"), logging.StreamHandler()],
-)
-
 
 class GenomeParser:
     def __init__(self, genome_id="GCA_900637025.1", student_id="210657G"):
@@ -27,7 +20,6 @@ class GenomeParser:
 
         self.fasta_file = self._find_fasta_file()
         self.gff_file = self.data_dir / "genomic.gff"
-        self.gtf_file = self.data_dir / "genomic.gtf"
 
         self.genome_record = None
         self.genes = []
@@ -146,74 +138,9 @@ class GenomeParser:
             logging.error(f"Error parsing GFF file: {e}")
             raise
 
-    def parse_genes_from_gtf(self, max_genes=1100):
-        """Alternative: Parse gene annotations from GTF file"""
-        genes = []
-
-        try:
-            if not self.gtf_file.exists():
-                raise FileNotFoundError(f"GTF file not found: {self.gtf_file}")
-
-            with open(self.gtf_file, "r") as f:
-                for line_num, line in enumerate(f, 1):
-                    if line.startswith("#") or line.strip() == "":
-                        continue
-
-                    parts = line.strip().split("\t")
-                    if len(parts) < 9:
-                        continue
-
-                    # Look for gene features
-                    feature_type = parts[2].lower()
-                    if feature_type == "gene":
-                        try:
-                            gene_info = {
-                                "chromosome": parts[0],
-                                "source": parts[1],
-                                "feature": parts[2],
-                                "start": int(parts[3])
-                                - 1,  # Convert to 0-based indexing
-                                "end": int(parts[4]),
-                                "score": parts[5] if parts[5] != "." else None,
-                                "strand": parts[6],
-                                "frame": parts[7] if parts[7] != "." else None,
-                                "attributes": parts[8],
-                                "line_number": line_num,
-                            }
-
-                            # Extract gene ID from GTF attributes
-                            attributes = parts[8]
-                            gene_id_match = re.search(r'gene_id "([^"]+)"', attributes)
-                            if gene_id_match:
-                                gene_info["gene_id"] = gene_id_match.group(1)
-                            else:
-                                gene_info["gene_id"] = f"gene_{len(genes) + 1}"
-
-                            genes.append(gene_info)
-
-                            if len(genes) >= max_genes:
-                                break
-
-                        except ValueError as ve:
-                            logging.warning(f"Error parsing GTF line {line_num}: {ve}")
-                            continue
-
-            self.genes = genes
-            logging.info(f"Parsed {len(self.genes)} genes from GTF file")
-            return self.genes
-
-        except Exception as e:
-            logging.error(f"Error parsing GTF file: {e}")
-            raise
-
-    def parse_genes(self, max_genes=1100, prefer_gff=True):
-        """Parse genes from available annotation files"""
-        if prefer_gff and self.gff_file.exists():
-            return self.parse_genes_from_gff(max_genes)
-        elif self.gtf_file.exists():
-            return self.parse_genes_from_gtf(max_genes)
-        else:
-            raise FileNotFoundError("No annotation files (GFF or GTF) found")
+    def parse_genes(self, max_genes=1100):
+        """Parse genes from GFF file"""
+        return self.parse_genes_from_gff(max_genes)
 
     def extract_upstream_regions(self, upstream_start=-15, upstream_end=-5):
         """Extract upstream regions for all genes"""

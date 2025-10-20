@@ -297,9 +297,10 @@ class BM4322Analysis:
         upstream_regions = parser.extract_upstream_regions()
 
         valid_regions = [r for r in upstream_regions if r["sequence_length"] == 11]
+        test_regions = valid_regions[100:1100]
 
         aligner = StatisticalAligner(ppm)
-        alignment_results = aligner.analyze_upstream_regions(valid_regions)
+        alignment_results = aligner.analyze_upstream_regions(test_regions)
 
         promoter_count = sum(1 for r in alignment_results if r["has_promoter"])
         detection_rate = (
