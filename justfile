@@ -26,6 +26,9 @@ all: setup
 visualize:
     uv run python src/visualizations.py
 
+report:
+    cd report && typst compile gsp.typ 210657G-a1.pdf
+
 # clean up generated files
 clean:
     rm -rf results/*
