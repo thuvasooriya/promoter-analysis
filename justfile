@@ -27,7 +27,7 @@ task-3: setup
     uv run python src/main.py --task 3
 
 # run complete analysis (all tasks)
-all: setup
+all: setup visualize
     uv run python src/main.py --task all
 
 # generate visualizations
@@ -40,17 +40,20 @@ report:
 report-w:
     cd report && typst watch gsp.typ 210657G-a1.pdf
 
+# run background distribution analysis (training vs test vs random)
+background: setup
+    uv run python src/background_analysis_runner.py
+
+# run advanced threshold methods (gmm, otsu, iqr, mad, percentile)
+advanced-threshold: setup
+    uv run python src/main.py --task 2 --threshold-method advanced
+
+# run all tasks with all threshold methods
+full-analysis: all background advanced-threshold compare-thresholds
+
 # clean up generated files
 clean:
     rm -rf results/*
     rm -rf logs/*
     rm -rf src/__pycache__/*
     rm -rf .pytest_cache
-
-# check data structure
-check-data:
-    @echo "checking data structure..."
-    @ls -la data/
-    @echo ""
-    @echo "checking student data directories:"
-    @find data -maxdepth 2 -type d -name "*_GCA_*"
