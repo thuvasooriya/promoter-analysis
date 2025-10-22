@@ -1,6 +1,6 @@
 {
   "test_regions": 1000,
-  "promoters_detected": 399,
-  "detection_rate": 0.399,
+  "promoters_detected": 336,
+  "detection_rate": 0.336,
   "threshold": -10.0
 }

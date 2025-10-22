@@ -6,6 +6,7 @@
   "upstream_regions": 1100,
   "valid_regions": 1100,
   "training_size": 100,
+  "training_unique_genes": 99,
   "promoters_found": 99,
   "consensus_sequence": "TATAAT",
   "consensus_score": -3.1437139554641838

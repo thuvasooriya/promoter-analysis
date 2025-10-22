@@ -29,6 +29,9 @@ visualize:
 report:
     cd report && typst compile gsp.typ 210657G-a1.pdf
 
+report-w:
+    cd report && typst watch gsp.typ 210657G-a1.pdf
+
 # clean up generated files
 clean:
     rm -rf results/*

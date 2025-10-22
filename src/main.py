@@ -108,9 +108,15 @@ class BM4322Analysis:
         promoters_df = pd.DataFrame(promoters)
         promoters_df.to_csv(self.task1_dir / "manual_promoters.csv", index=False)
 
+        training_gene_ids = set(p["gene_id"] for p in promoters)
+        with open(self.task1_dir / "training_gene_ids.txt", "w") as f:
+            for gene_id in sorted(training_gene_ids):
+                f.write(f"{gene_id}\n")
+
         logging.info(
             f"Extracted {len(promoters)} promoters from {sample_size} sequences"
         )
+        logging.info(f"Training uses {len(training_gene_ids)} unique genes")
 
         if len(promoters) < 10:
             logging.error("Too few promoters found!")
@@ -136,6 +142,7 @@ class BM4322Analysis:
             "upstream_regions": len(upstream_regions),
             "valid_regions": len(valid_regions),
             "training_size": sample_size,
+            "training_unique_genes": len(training_gene_ids),
             "promoters_found": len(promoters),
             "consensus_sequence": consensus,
             "consensus_score": float(consensus_score),
@@ -145,9 +152,9 @@ class BM4322Analysis:
             json.dump(task1_summary, f, indent=2)
 
         logging.info("=== Task 1 Complete ===")
-        return ppm_df, valid_regions, sample_size
+        return ppm_df, valid_regions, training_gene_ids
 
-    def run_task2(self, ppm_df=None, valid_regions=None, sample_size=None):
+    def run_task2(self, ppm_df=None, valid_regions=None, training_gene_ids=None):
         """Run Task 2: Statistical alignment on remaining regions"""
         logging.info("=== Task 2: Statistical Alignment ===")
 
@@ -158,21 +165,32 @@ class BM4322Analysis:
                 return
             ppm_df = pd.read_csv(ppm_file, index_col=0)
 
-        if valid_regions is None or sample_size is None:
+        if valid_regions is None:
             parser = GenomeParser(self.genome_id, self.student_id)
             parser.load_genome()
             parser.parse_genes(max_genes=1100)
             upstream_regions = parser.extract_upstream_regions()
             valid_regions = [r for r in upstream_regions if r["sequence_length"] == 11]
-            sample_size = 100
 
-        aligner = StatisticalAligner(ppm_df)
-        test_regions = valid_regions[sample_size : sample_size + 1000]
+        if training_gene_ids is None:
+            training_ids_file = self.task1_dir / "training_gene_ids.txt"
+            if training_ids_file.exists():
+                with open(training_ids_file, "r") as f:
+                    training_gene_ids = set(line.strip() for line in f)
+            else:
+                logging.error("Training gene IDs not found. Run Task 1 first.")
+                return
+
+        test_regions = [r for r in valid_regions if r["gene_id"] not in training_gene_ids]
+        test_regions = test_regions[:1000]
 
         if len(test_regions) < 1000:
-            logging.warning(f"Only {len(test_regions)} test sequences available")
+            logging.warning(f"Only {len(test_regions)} non-overlapping test sequences available")
 
+        logging.info(f"Training genes excluded: {len(training_gene_ids)}")
         logging.info(f"Testing on {len(test_regions)} regions")
+
+        aligner = StatisticalAligner(ppm_df)
         alignment_results = aligner.analyze_upstream_regions(test_regions)
 
         results_df = pd.DataFrame(
@@ -297,7 +315,13 @@ class BM4322Analysis:
         upstream_regions = parser.extract_upstream_regions()
 
         valid_regions = [r for r in upstream_regions if r["sequence_length"] == 11]
-        test_regions = valid_regions[100:1100]
+        
+        promoter_finder = PromoterFinder()
+        training_promoters = promoter_finder.extract_promoters_manual(valid_regions, 100)
+        training_gene_ids = set(p["gene_id"] for p in training_promoters)
+        
+        test_regions = [r for r in valid_regions if r["gene_id"] not in training_gene_ids]
+        test_regions = test_regions[:1000]
 
         aligner = StatisticalAligner(ppm)
         alignment_results = aligner.analyze_upstream_regions(test_regions)
@@ -366,12 +390,19 @@ def main():
     try:
         analysis = BM4322Analysis()
 
+        ppm_df = None
+        valid_regions = None
+        training_gene_ids = None
+
         if args.task in ["1", "all"]:
-            analysis.run_task1()
+            ppm_df, valid_regions, training_gene_ids = analysis.run_task1()
             print("Task 1 (PPM construction) completed!")
 
         if args.task in ["2", "all"]:
-            analysis.run_task2()
+            if args.task == "2":
+                analysis.run_task2()
+            else:
+                analysis.run_task2(ppm_df, valid_regions, training_gene_ids)
             print("Task 2 (statistical alignment) completed!")
 
         if args.task in ["3", "all"]:
