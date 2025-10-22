@@ -38,11 +38,6 @@ class PromoterVisualizer:
 
         ax.set_xlabel("Position in Promoter", fontsize=12)
         ax.set_ylabel("Nucleotide", fontsize=12)
-        ax.set_title(
-            "Position Probability Matrix (PPM) - Promoter WAWWWT Pattern\nStudent 210657G",
-            fontsize=14,
-            fontweight="bold",
-        )
 
         plt.tight_layout()
         plt.savefig(self.figures_dir / "ppm_heatmap.png", dpi=300, bbox_inches="tight")
@@ -58,9 +53,9 @@ class PromoterVisualizer:
 
         ax.set_xlabel("Position", fontsize=12)
         ax.set_ylabel("Probability", fontsize=12)
-        ax.set_title(
-            "Sequence Logo - Consensus: TATAAT", fontsize=14, fontweight="bold"
-        )
+        # ax.set_title(
+        #     "Sequence Logo - Consensus: TATAAT", fontsize=14, fontweight="bold"
+        # )
 
         plt.tight_layout()
         plt.savefig(
@@ -258,12 +253,12 @@ class PromoterVisualizer:
         )
         ax2.grid(axis="x", alpha=0.3)
 
-        plt.suptitle(
-            f"Training Data Analysis (n={len(self.promoters_df)})",
-            fontsize=14,
-            fontweight="bold",
-            y=1.02,
-        )
+        # plt.suptitle(
+        #     f"Training Data Analysis (n={len(self.promoters_df)})",
+        #     fontsize=14,
+        #     fontweight="bold",
+        #     y=1.02,
+        # )
         plt.tight_layout()
         plt.savefig(
             self.figures_dir / "training_data_analysis.png",
@@ -276,7 +271,11 @@ class PromoterVisualizer:
     def plot_cross_validation_comparison(self):
         import json
 
-        cv_file = self.results_dir / "task3_cross_validation" / "cross_validation_results.json"
+        cv_file = (
+            self.results_dir
+            / "task3_cross_validation"
+            / "cross_validation_results.json"
+        )
         if not cv_file.exists():
             print(f"Cross-validation results not found: {cv_file}")
             return
@@ -301,7 +300,9 @@ class PromoterVisualizer:
         fig, ax = plt.subplots(figsize=(10, 6))
 
         colors = ["#3498db"] * (len(students) - 1) + ["#e74c3c"]
-        bars = ax.bar(students, detection_rates, color=colors, edgecolor="black", alpha=0.8)
+        bars = ax.bar(
+            students, detection_rates, color=colors, edgecolor="black", alpha=0.8
+        )
 
         mean_rate = sum(detection_rates) / len(detection_rates)
         ax.axhline(
@@ -314,11 +315,11 @@ class PromoterVisualizer:
 
         ax.set_xlabel("Student Genome", fontsize=12, fontweight="bold")
         ax.set_ylabel("Detection Rate (%)", fontsize=12, fontweight="bold")
-        ax.set_title(
-            "Cross-Validation: PPM Performance Across Genomes\nStudent 210657G's PPM",
-            fontsize=14,
-            fontweight="bold",
-        )
+        # ax.set_title(
+        #     "Cross-Validation: PPM Performance Across Genomes\nStudent 210657G's PPM",
+        #     fontsize=14,
+        #     fontweight="bold",
+        # )
         ax.legend()
         ax.grid(axis="y", alpha=0.3)
 

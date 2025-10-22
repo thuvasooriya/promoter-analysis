@@ -13,12 +13,20 @@ from scoring import SequenceScorer
 
 
 class PPMBuilder:
-    def __init__(self, pseudocount: float = 0.01):
-        """Initialize PPM builder with pseudocount for all bases"""
+    def __init__(self, pseudocount: float = 0.01, filter_mode: str = "consecutive_w"):
+        """Initialize PPM builder with pseudocount for all bases
+
+        Args:
+            pseudocount: pseudocount value for probability calculations
+            filter_mode: "consecutive_w" or "wawwwt" - passed to SequenceScorer
+        """
         self.pseudocount = pseudocount
+        self.filter_mode = filter_mode
         self.bases = ["A", "C", "G", "T"]
         self.scorer: Optional[SequenceScorer] = None
-        logging.info(f"Initialized PPM builder with pseudocount {pseudocount}")
+        logging.info(
+            f"Initialized PPM builder with pseudocount {pseudocount}, filter_mode={filter_mode}"
+        )
 
     def build_ppm(self, promoter_sequences: List[str]) -> pd.DataFrame:
         """Build Position Probability Matrix from promoter sequences"""
@@ -55,7 +63,7 @@ class PPMBuilder:
             index=[f"Position_{i + 1}" for i in range(seq_length)],
         )
 
-        self.scorer = SequenceScorer(ppm_df)
+        self.scorer = SequenceScorer(ppm_df, filter_mode=self.filter_mode)
         logging.info(f"Built PPM from {num_sequences} sequences of length {seq_length}")
         return ppm_df
 

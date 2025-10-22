@@ -28,15 +28,25 @@ class BM4322Analysis:
         genome_id="GCA_900637025.1",
         student_id="210657G",
         threshold_method="empirical",
+        filter_mode="consecutive_w",
     ):
-        """Initialize analysis for specific genome and student"""
+        """Initialize analysis for specific genome and student
+        
+        Args:
+            genome_id: genome accession ID
+            student_id: student identifier
+            threshold_method: threshold calculation method
+            filter_mode: "consecutive_w" (WWWWWW) or "wawwwt" (WAWWWT pattern)
+        """
         self.genome_id = genome_id
         self.student_id = student_id
         self.threshold_method = threshold_method
+        self.filter_mode = filter_mode
 
         self.data_dir = Path("data")
         self.results_dir = Path("results")
         self.task1_dir = Path("results/task1_ppm")
+        self.task3_dir = Path("results/task3_cross_validation")
 
         if threshold_method == "empirical":
             self.task2_dir = Path("results/task2_alignment")
@@ -44,8 +54,11 @@ class BM4322Analysis:
             self.task2_dir = Path("results/task2_consensus")
         else:
             self.task2_dir = Path(f"results/task2_advanced_{threshold_method}")
-
-        self.task3_dir = Path("results/task3_cross_validation")
+        
+        if filter_mode == "wawwwt":
+            self.task1_dir = Path(f"results/task1_ppm")
+            self.task2_dir = Path(f"results/task2_alignment")
+            self.task3_dir = Path("results/task3_cross_validation")
         self.logs_dir = Path("logs")
 
         for dir_path in [
@@ -67,7 +80,7 @@ class BM4322Analysis:
         )
 
         logging.info(
-            f"Initialized analysis for student {student_id}, genome {genome_id}"
+            f"Initialized analysis for student {student_id}, genome {genome_id}, filter_mode={filter_mode}"
         )
 
     def verify_data_files(self):
@@ -107,7 +120,7 @@ class BM4322Analysis:
         logging.info(f"Total genes found: {len(genes)}")
         logging.info(f"Upstream regions extracted: {len(upstream_regions)}")
 
-        promoter_finder = PromoterFinder()
+        promoter_finder = PromoterFinder(filter_mode=self.filter_mode)
         valid_regions = [r for r in upstream_regions if r["sequence_length"] == 11]
         logging.info(f"Valid 11-bp upstream regions: {len(valid_regions)}")
 
@@ -136,7 +149,7 @@ class BM4322Analysis:
             logging.error("Too few promoters found!")
             return None, None, None
 
-        ppm_builder = PPMBuilder(pseudocount=0.01)
+        ppm_builder = PPMBuilder(pseudocount=0.01, filter_mode=self.filter_mode)
         promoter_sequences = [p["promoter_sequence"] for p in promoters]
         ppm_df = ppm_builder.build_ppm(promoter_sequences)
 
@@ -151,6 +164,7 @@ class BM4322Analysis:
         task1_summary = {
             "student_id": self.student_id,
             "genome_id": self.genome_id,
+            "filter_mode": self.filter_mode,
             "genome_length": len(genome_record.seq),
             "total_genes": len(genes),
             "upstream_regions": len(upstream_regions),
@@ -366,7 +380,11 @@ class BM4322Analysis:
 
     def _test_ppm_on_student_data(self, target_student_id, target_genome_id, ppm):
         """Test PPM on another student's genome data"""
-        temp_analysis = BM4322Analysis(target_genome_id, target_student_id)
+        temp_analysis = BM4322Analysis(
+            target_genome_id, 
+            target_student_id,
+            filter_mode=self.filter_mode
+        )
 
         parser = GenomeParser(target_genome_id, target_student_id)
         genome_record = parser.load_genome()
@@ -375,7 +393,7 @@ class BM4322Analysis:
 
         valid_regions = [r for r in upstream_regions if r["sequence_length"] == 11]
 
-        promoter_finder = PromoterFinder()
+        promoter_finder = PromoterFinder(filter_mode=self.filter_mode)
         training_promoters = promoter_finder.extract_promoters_manual(
             valid_regions, 100
         )
@@ -463,10 +481,19 @@ def main():
         default="empirical",
         help="Threshold calculation method for Task 2 (default: empirical at -10.0)",
     )
+    parser.add_argument(
+        "--filter-mode",
+        choices=["consecutive_w", "wawwwt"],
+        default="consecutive_w",
+        help="Promoter filtering mode: consecutive_w (WWWWWW) or wawwwt (WAWWWT pattern)",
+    )
     args = parser.parse_args()
 
     try:
-        analysis = BM4322Analysis(threshold_method=args.threshold_method)
+        analysis = BM4322Analysis(
+            threshold_method=args.threshold_method,
+            filter_mode=args.filter_mode
+        )
 
         ppm_df = None
         valid_regions = None

@@ -10,13 +10,19 @@ import pandas as pd
 
 
 class SequenceScorer:
-    def __init__(self, ppm_df: pd.DataFrame):
-        """Initialize scorer with Position Probability Matrix"""
+    def __init__(self, ppm_df: pd.DataFrame, filter_mode: str = "consecutive_w"):
+        """Initialize scorer with Position Probability Matrix
+        
+        Args:
+            ppm_df: Position Probability Matrix DataFrame
+            filter_mode: "consecutive_w" or "wawwwt" (for logging/tracking)
+        """
         self.ppm_df = ppm_df
         self.ppm_length = len(ppm_df)
         self.bases = ["A", "C", "G", "T"]
+        self.filter_mode = filter_mode
         self.consensus_score = self.calculate_consensus_score()
-        logging.info(f"Initialized SequenceScorer with PPM of length {self.ppm_length}")
+        logging.info(f"Initialized SequenceScorer with PPM of length {self.ppm_length}, filter_mode={filter_mode}")
 
     def calculate_consensus_score(self) -> float:
         """Calculate consensus sequence benchmark score"""
