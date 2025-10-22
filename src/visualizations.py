@@ -181,11 +181,11 @@ class PromoterVisualizer:
             colors=colors,
             explode=(0.05, 0),
         )
-        ax1.set_title(
-            "Promoter Detection Rate\n(1000 Test Sequences)",
-            fontsize=13,
-            fontweight="bold",
-        )
+        # ax1.set_title(
+        #     "Promoter Detection Rate\n(1000 Test Sequences)",
+        #     fontsize=13,
+        #     fontweight="bold",
+        # )
 
         position_series = self.results_df[self.results_df["has_promoter"] == True][
             "best_position"
@@ -199,11 +199,11 @@ class PromoterVisualizer:
         )
         ax2.set_xlabel("Position in Upstream Region", fontsize=12)
         ax2.set_ylabel("Count", fontsize=12)
-        ax2.set_title(
-            "Promoter Position Distribution\n(Where promoters were found)",
-            fontsize=13,
-            fontweight="bold",
-        )
+        # ax2.set_title(
+        #     "Promoter Position Distribution\n(Where promoters were found)",
+        #     fontsize=13,
+        #     fontweight="bold",
+        # )
         ax2.grid(axis="y", alpha=0.3)
 
         plt.tight_layout()

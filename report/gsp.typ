@@ -256,38 +256,13 @@ Sliding window analysis reveals where promoters are detected within 11-bp upstre
 
 This 5' enrichment confirms the -10 box location hypothesis (approximately 10 bases upstream of the start codon, corresponding to earlier positions in the -15 to -5 extraction window).
 
-=== Statistical Alignment Scoring Example
-
-*"Positive" Sequence (TATAAT - perfect consensus):*
-
-$
-  S = log(0.262) + log(0.999) + log(0.452) + log(0.785) + log(0.785) + log(0.999) = -1.39
-$
-
-$
-  S_("normalized") = -1.39 - (-1.392) approx 0.0 > -10.0 arrow "Promoter detected"
-$
-
-*"Negative" Sequence (GGCCAC):*
-
-$
-  S = log(0.0002) + log(0.0002) + log(0.0002) + log(0.0002) + log(0.0002) + log(0.0002) approx -51.3
-$
-
-$ S_("normalized") = -51.3 - (-1.392) = -49.9 < -10.0 arrow "No promoter" $
-
-The clear score separation demonstrates the PPM's discriminatory power.
 
 #figure(
   image("assets/figures/detection_summary.png", width: 90%),
-  caption: [Detection summary for Task 2. Top panel shows 12.6% detection rate (126/1000 sequences). Bottom panel displays positional distribution of detected promoters within 11-bp upstream regions, with ~70% detected at positions 0-2 (farther from start codon), consistent with -10 box location hypothesis. Detected sequences show strong TATAAT-like patterns, reflecting the canonical Pribnow box structure.],
+  caption: [Detection summary for Task 2. Top panel shows 12.6% detection rate (126/1000 sequences). Bottom panel displays positional distribution of detected promoters within 11-bp upstream regions, with ~70% detected at positions 0-2 (farther from start codon), consistent with -10 box location hypothesis. Detected sequences show strong `TATAAT`-like patterns, reflecting the canonical Pribnow box structure.],
 )
 
 == Task 3: Cross-Validation Results
-
-=== Testing 210657G's PPM on other students' genomes
-
-*Note:* Cross-validation uses empirical threshold (Score > -10.0) for practical detection.
 
 #figure(
   table(
@@ -304,15 +279,16 @@ The clear score separation demonstrates the PPM's discriminatory power.
 
 === Cross-Validation Statistics
 
+
+#figure(
+  image("assets/figures/cross_validation_comparison.png", width: 82%),
+  caption: [Cross-validation comparison showing consistent detection rates across genomes using empirical threshold],
+)
+
 - Mean detection rate: 12.9%
 - Standard deviation: 1.5%
 - Range: 10.2% - 14.3%
 - Own genome (210657G): 12.6% (empirical threshold)
-
-#figure(
-  image("assets/figures/cross_validation_comparison.png", width: 90%),
-  caption: [Cross-validation comparison showing consistent detection rates across genomes using empirical threshold],
-)
 
 === Interpretation
 
@@ -325,13 +301,13 @@ Using the empirical threshold (-10.0), consistent detection rates across diverse
 
 The 10-14% detection range reflects the biological reality that only a subset of genes utilize canonical $sigma^(70)$ TATAAT promoters, with remaining genes employing alternative regulatory mechanisms.
 
+#pagebreak()
+
 = Discussion
 
-== Biological Validation
+== Consensus Sequence Analysis
 
-=== Consensus Sequence Analysis
-
-The computed consensus *TATAAT* perfectly matches the canonical bacterial *Pribnow box*, providing strong biological validation:
+The computed consensus *`TATAAT`* perfectly matches the canonical bacterial *Pribnow box*, providing strong biological validation:
 
 + *Computational methodology:* Statistical alignment successfully identified biologically relevant sequences matching the established $sigma^(70)$ recognition motif
 + *Pattern matching quality:* WAWWWT filter accurately captured true promoter sequences
@@ -339,30 +315,6 @@ The computed consensus *TATAAT* perfectly matches the canonical bacterial *Pribn
 + *Near-complete conservation:* Positions 2 (99.9% A) and 6 (99.9% T) show critical conservation defining the TATAAT motif
 + *Position-specific variation:* Positions 1, 3, 4, 5 allow AT variation (W positions) while maintaining functional DNA melting capability
 + *Zero G/C frequencies:* All C/G probabilities derive from pseudocounts only ($k = 0.01$), consistent with functional constraints for transcription bubble formation
-
-=== AT-Richness and DNA Melting
-
-The complete absence of G/C in training sequences (100% W bases) reflects a fundamental functional requirement for transcription initiation. From the lecture notes on promoter search:
-
-*"From the 2H bond of A and T, mutation of A to T will not have an effect. The TATAAT box can change... Promoter functionality is retained when A mutates to T or vice versa, as there is no change to hydrogen bonds."*
-
-Biophysical basis:
-- *AT base pairs:* 2 hydrogen bonds (easily separated during DNA melting)
-- *GC base pairs:* 3 hydrogen bonds (stronger, resist melting)
-- *Transcription bubble formation:* RNA polymerase requires strand separation for template access; AT-richness facilitates this process
-
-*"Promoter functionality is compromised when C or G mutations occur, due to changes in hydrogen bonds."* (Lecture notes)
-
-=== Position-Specific Conservation and $sigma^(70)$ Recognition
-
-The TATAAT consensus with 99.9% conservation at positions 2 and 6 is critical for:
-
-+ *$sigma^(70)$ subunit recognition:* The RNA polymerase $sigma^(70)$ factor specifically recognizes the TATAAT sequence through sequence-specific protein-DNA contacts at positions 2 and 6
-+ *DNA bending and flexibility:* AT-rich sequences bend more easily, facilitating DNA wrapping around RNA polymerase
-+ *Transcription bubble nucleation:* Conserved positions serve as preferred initiation points for strand separation during open complex formation
-+ *Functional flexibility:* W positions (1, 3, 4, 5) allow AT variation, enabling fine-tuning of promoter strength while maintaining DNA melting capability
-
-The observed position-specific probabilities match *empirically-derived* patterns from genome-wide promoter analyses and align with biochemical studies of $sigma^(70)$-DNA interactions.
 
 == Detection Rate Analysis
 
@@ -403,8 +355,6 @@ Following heuristic threshold methodology from lecture notes:
 - Validation: Cross-genome consistency (10-14%) confirms threshold generalizability
 - Interpretation: Sequences scoring > -10.0 are functionally similar to TATAAT consensus
 
-== Cross-Validation Significance
-
 === Model Consistency Across Genomes
 
 Cross-validation detection rates using empirical threshold (-10.0): 10.2% (210707L) to 14.3% (210732H), mean = 12.9%, SD = 1.5%
@@ -421,54 +371,7 @@ This tight clustering (CV = 11.6%) across phylogenetically related _Streptococcu
 
 
 
-=== Biological Implications
-
-The similar detection patterns (10-14% range) across genomes suggest:
-
-+ *Conserved promoter architecture:* Related _S. pyogenes_ strains share similar proportions of canonical vs. alternative promoters
-+ *Consistent gene regulation:* Approximately 10-14% of genes in each strain utilize canonical $sigma^(70)$ TATAAT promoters
-+ *Species-level conservation:* Within-species variation is minimal (CV = 11.6%), indicating selective pressure maintaining promoter features
-+ *Regulatory diversity:* Remaining 85-90% of genes employ alternative regulatory mechanisms, reflecting diverse transcriptional control strategies
-
-== Clinical Relevance
-
-_S. pyogenes_ is a human pathogen causing pharyngitis, scarlet fever, and invasive infections. Understanding promoter architecture can inform:
-
-- Antibiotic development targeting transcription
-- Gene regulation studies for virulence factors
-- Comparative genomics identifying strain differences
-
-== Limitations and Future Directions
-
-=== Methodological Limitations
-
-+ *Single promoter element modeled:* Analysis focused exclusively on the -10 box (Pribnow box). The -35 box (TTGACA region) and spacer length (typically 17 ± 1 bp between -35 and -10 elements) were not incorporated. From lecture notes: *"The TTGACA box is a binding site for sigma factor proteins... TTGACA → TATAAT → ATG → Coding region."* A complete promoter model should include both elements for improved detection accuracy.
-
-+ *Fixed extraction window:* Used -15 to -5 region relative to start codon. True promoters can occur at variable distances; optimal search window may differ for genes with longer 5' UTRs or alternative transcription start sites (TSSs).
-
-+ *Pattern-based selection:* The 42 training sequences were selected using WAWWWT pattern matching ([AT]A[AT][AT][AT]T). While this ensures biological relevance, alternative selection criteria might capture additional promoter variants.
-
-=== Cross-Validation Scope
-
-+ *Unidirectional testing:* Applied 210657G's PPM to other genomes but did not test reciprocally (other students' PPMs on 210657G). Bidirectional cross-validation would better assess model robustness.
-
-+ *Within-species only:* All genomes are _Streptococcus pyogenes_ strains (same species). Testing across phylogenetically distant bacteria (e.g., _E. coli_, _B. subtilis_) would evaluate true generalizability of TATAAT motif recognition.
-
-=== Biological Validation
-
-+ *Computational predictions only:* No experimental confirmation via:
-  - RNA-seq (transcription start site mapping)
-  - Promoter-reporter assays (functional activity)
-  - ChIP-seq ($sigma^(70)$ binding verification)
-
-+ *Binary classification:* Promoters classified as present/absent, but real promoters have varying *strength* (transcription rates). Statistical scores could be calibrated against expression levels.
-
-=== Future Directions
-
-+ *Incorporate -35 box:* Build joint PPM for both elements with spacer length modeling
-+ *Use position weight matrices (PWM):* Replace probabilities with log-odds scores relative to background nucleotide frequencies
-+ *Machine learning approaches:* Compare statistical alignment against modern methods (CNNs, transformers) for promoter prediction
-+ *Experimental validation:* Prioritize high-scoring predictions for wet-lab verification
+#pagebreak()
 
 = Conclusion
 
@@ -476,11 +379,11 @@ This study successfully applied *statistical gene prediction* methodology to ide
 
 === Key Findings
 
-+ *Consensus Sequence:* Computed consensus is *TATAAT*, perfectly matching the canonical Pribnow box and providing strong biological validation of the methodology.
++ *Consensus Sequence:* Computed consensus is *`TATAAT`*, perfectly matching the canonical Pribnow box and providing strong biological validation of the methodology.
 
-+ *PPM Construction:* Successfully built from 42 sequences matching WAWWWT pattern [AT]A[AT][AT][AT]T. Near-complete conservation at positions 2 (99.9% A) and 6 (99.9% T) defines the canonical motif, while positions 1, 3, 4, 5 allow AT variation (W positions) for functional flexibility.
++ *PPM Construction:* Successfully built from 42 sequences matching `WAWWWT` pattern `[AT]A[AT][AT][AT]T`. Near-complete conservation at positions 2 (99.9% A) and 6 (99.9% T) defines the canonical motif, while positions 1, 3, 4, 5 allow AT variation (W positions) for functional flexibility.
 
-+ *Statistical Alignment Methodology:* Log probability scoring ($sum log(p_(j comma s_j))$) provides quantitative measure of sequence similarity to TATAAT consensus. Perfect matches score ~0, while non-promoters score below -10.0.
++ *Statistical Alignment Methodology:* Log probability scoring ($sum log(p_(j comma s_j))$) provides quantitative measure of sequence similarity to `TATAAT` consensus. Perfect matches score ~0, while non-promoters score below -10.0.
 
 + *Detection Performance:* Empirical threshold (-10.0) yields 12.6% detection rate (126/1000), reflecting biological reality that only a subset of genes utilize canonical $sigma^(70)$ promoters. Remaining genes employ alternative regulatory mechanisms.
 
@@ -489,22 +392,4 @@ This study successfully applied *statistical gene prediction* methodology to ide
   - Own genome (12.6%) aligns with cross-validation mean
   - Tight clustering indicates conserved promoter architecture across strains
 
-+ *Biological Validation:* TATAAT consensus with 99.9% conservation at critical positions matches established $sigma^(70)$ recognition motif, confirming methodology accurately captures true biological signals.
-
-=== Methodological Contribution
-
-This work demonstrates practical implementation of statistical gene prediction concepts:
-- Pattern-based promoter selection using biologically motivated WAWWWT filter
-- Empirical PPM construction with pseudocounts for unobserved bases
-- Statistical alignment scoring with log probabilities
-- Empirical threshold derivation allowing controlled sequence variation
-- Cross-validation for assessing model generalizability
-
-The analysis validates that successful promoter detection requires:
-- *Biological prior knowledge:* WAWWWT pattern ensures training data quality
-- *Appropriate threshold selection:* Empirical threshold (-10.0) balances specificity and sensitivity
-- *Model validation:* Cross-genome testing confirms generalizability (CV = 11.6%)
-- *Result interpretation:* Low detection rates (12.6%) reflect biological reality, not methodological failure
-
-The perfect match between computed consensus (TATAAT) and canonical Pribnow box demonstrates that *pattern-based filtering combined with statistical modeling successfully captures authentic biological signals*.
-
++ *Biological Validation:* `TATAAT` consensus with 99.9% conservation at critical positions matches established $sigma^(70)$ recognition motif, confirming methodology accurately captures true biological signals.
