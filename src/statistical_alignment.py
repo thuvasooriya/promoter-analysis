@@ -8,57 +8,35 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 
+from scoring import SequenceScorer
+
 
 class StatisticalAligner:
-    def __init__(self, ppm_df: pd.DataFrame):
+    def __init__(self, ppm_df: pd.DataFrame, threshold_method: str = "empirical"):
         """Initialize with Position Probability Matrix"""
         self.ppm_df = ppm_df
         self.ppm_length = len(ppm_df)
-        self.consensus_score = self._calculate_consensus_score()
-        self.threshold = -10.0
+        self.scorer = SequenceScorer(ppm_df)
+        self.consensus_score = self.scorer.consensus_score
+        self.threshold_method = threshold_method
+        
+        if threshold_method == "consensus":
+            self.threshold = 0.0
+        else:
+            self.threshold = -10.0
+        
         logging.info(
             f"Initialized StatisticalAligner with PPM of length {self.ppm_length}"
         )
-
-    def _calculate_consensus_score(self) -> float:
-        """Calculate consensus sequence benchmark score"""
-        consensus_probs = []
-        for _, row in self.ppm_df.iterrows():
-            max_prob = row.max()
-            consensus_probs.append(np.log(max_prob))
-        return sum(consensus_probs)
+        logging.info(f"Threshold method: {threshold_method}, threshold: {self.threshold}")
 
     def score_sequence(self, sequence: str) -> float:
-        """Score a sequence using PPM"""
-        if len(sequence) != self.ppm_length:
-            raise ValueError(f"Sequence length must be {self.ppm_length}")
-
-        log_score = 0.0
-        for pos, base in enumerate(sequence):
-            if base in ["A", "C", "G", "T"]:
-                prob = self.ppm_df.iloc[pos][base]
-                if prob > 0:
-                    log_score += np.log(prob)
-                else:
-                    log_score += np.log(1e-10)  # Small probability for zero values
-
-        return log_score
+        """Score a sequence using PPM (normalized)"""
+        return self.scorer.score_sequence(sequence, normalize=True)
 
     def sliding_window_analysis(self, sequence: str) -> List[Dict]:
         """Perform sliding window analysis on longer sequence"""
-        results = []
-
-        if len(sequence) < self.ppm_length:
-            return results
-
-        for i in range(len(sequence) - self.ppm_length + 1):
-            subseq = sequence[i : i + self.ppm_length]
-            score = self.score_sequence(subseq)
-            normalized_score = score - self.consensus_score
-
-            results.append({"position": i, "sequence": subseq, "score": normalized_score})
-
-        return results
+        return self.scorer.sliding_window_score(sequence, normalize=True)
 
     def set_threshold(self, training_scores: List[float], method="mean_minus_2std"):
         """Set detection threshold based on training data"""
@@ -87,16 +65,15 @@ class StatisticalAligner:
 
             if len(sequence) == self.ppm_length:
                 score = self.score_sequence(sequence)
-                normalized_score = score - self.consensus_score
 
                 results.append(
                     {
                         "gene_id": region["gene_id"],
                         "upstream_sequence": sequence,
-                        "best_score": normalized_score,
+                        "best_score": score,
                         "best_position": 0,
                         "best_subsequence": sequence,
-                        "has_promoter": normalized_score > self.threshold,
+                        "has_promoter": score > self.threshold,
                     }
                 )
             else:

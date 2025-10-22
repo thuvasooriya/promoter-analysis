@@ -15,6 +15,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from advanced_threshold import AdvancedThresholdCalculator
 from data_parser import GenomeParser
 from ppm_builder import PPMBuilder
 from promoter_finder import PromoterFinder
@@ -22,15 +23,28 @@ from statistical_alignment import StatisticalAligner
 
 
 class BM4322Analysis:
-    def __init__(self, genome_id="GCA_900637025.1", student_id="210657G"):
+    def __init__(
+        self,
+        genome_id="GCA_900637025.1",
+        student_id="210657G",
+        threshold_method="empirical",
+    ):
         """Initialize analysis for specific genome and student"""
         self.genome_id = genome_id
         self.student_id = student_id
+        self.threshold_method = threshold_method
 
         self.data_dir = Path("data")
         self.results_dir = Path("results")
         self.task1_dir = Path("results/task1_ppm")
-        self.task2_dir = Path("results/task2_alignment")
+
+        if threshold_method == "empirical":
+            self.task2_dir = Path("results/task2_alignment")
+        elif threshold_method == "consensus":
+            self.task2_dir = Path("results/task2_consensus")
+        else:
+            self.task2_dir = Path(f"results/task2_advanced_{threshold_method}")
+
         self.task3_dir = Path("results/task3_cross_validation")
         self.logs_dir = Path("logs")
 
@@ -181,16 +195,57 @@ class BM4322Analysis:
                 logging.error("Training gene IDs not found. Run Task 1 first.")
                 return
 
-        test_regions = [r for r in valid_regions if r["gene_id"] not in training_gene_ids]
+        test_regions = [
+            r for r in valid_regions if r["gene_id"] not in training_gene_ids
+        ]
         test_regions = test_regions[:1000]
 
         if len(test_regions) < 1000:
-            logging.warning(f"Only {len(test_regions)} non-overlapping test sequences available")
+            logging.warning(
+                f"Only {len(test_regions)} non-overlapping test sequences available"
+            )
 
         logging.info(f"Training genes excluded: {len(training_gene_ids)}")
         logging.info(f"Testing on {len(test_regions)} regions")
 
-        aligner = StatisticalAligner(ppm_df)
+        aligner = StatisticalAligner(ppm_df, threshold_method=self.threshold_method)
+
+        threshold_stats = None
+        if self.threshold_method in [
+            "mean_minus_2std",
+            "percentile",
+            "otsu",
+            "gmm",
+            "iqr",
+            "mad",
+        ]:
+            logging.info(f"Using advanced threshold method: {self.threshold_method}")
+
+            promoters_file = self.task1_dir / "manual_promoters.csv"
+            if not promoters_file.exists():
+                logging.error("Training promoters not found. Run Task 1 first.")
+                return
+
+            promoters_df = pd.read_csv(promoters_file)
+            training_sequences = promoters_df["promoter_sequence"].tolist()
+
+            training_scores = [
+                aligner.score_sequence(seq) for seq in training_sequences
+            ]
+
+            threshold_calc = AdvancedThresholdCalculator()
+            threshold, threshold_stats = threshold_calc.calculate_threshold(
+                training_scores, method=self.threshold_method
+            )
+            aligner.threshold = threshold
+            logging.info(
+                f"Threshold set to {threshold:.3f} using {self.threshold_method}"
+            )
+        elif self.threshold_method == "consensus":
+            logging.info("Using consensus-based threshold (score > 0)")
+        else:
+            logging.info(f"Using empirical threshold: {aligner.threshold}")
+
         alignment_results = aligner.analyze_upstream_regions(test_regions)
 
         results_df = pd.DataFrame(
@@ -216,11 +271,15 @@ class BM4322Analysis:
         )
 
         task2_summary = {
+            "threshold_method": self.threshold_method,
             "test_regions": len(test_regions),
             "promoters_detected": promoter_count,
             "detection_rate": float(detection_rate),
             "threshold": float(aligner.threshold),
         }
+
+        if threshold_stats:
+            task2_summary["threshold_statistics"] = threshold_stats
 
         with open(self.task2_dir / "task2_summary.json", "w") as f:
             json.dump(task2_summary, f, indent=2)
@@ -315,12 +374,16 @@ class BM4322Analysis:
         upstream_regions = parser.extract_upstream_regions()
 
         valid_regions = [r for r in upstream_regions if r["sequence_length"] == 11]
-        
+
         promoter_finder = PromoterFinder()
-        training_promoters = promoter_finder.extract_promoters_manual(valid_regions, 100)
+        training_promoters = promoter_finder.extract_promoters_manual(
+            valid_regions, 100
+        )
         training_gene_ids = set(p["gene_id"] for p in training_promoters)
-        
-        test_regions = [r for r in valid_regions if r["gene_id"] not in training_gene_ids]
+
+        test_regions = [
+            r for r in valid_regions if r["gene_id"] not in training_gene_ids
+        ]
         test_regions = test_regions[:1000]
 
         aligner = StatisticalAligner(ppm)
@@ -385,10 +448,25 @@ def main():
         default="all",
         help="Task to run: 1 (PPM), 2 (alignment), 3 (cross-validation), all (complete)",
     )
+    parser.add_argument(
+        "--threshold-method",
+        choices=[
+            "empirical",
+            "consensus",
+            "mean_minus_2std",
+            "percentile",
+            "otsu",
+            "gmm",
+            "iqr",
+            "mad",
+        ],
+        default="empirical",
+        help="Threshold calculation method for Task 2 (default: empirical at -10.0)",
+    )
     args = parser.parse_args()
 
     try:
-        analysis = BM4322Analysis()
+        analysis = BM4322Analysis(threshold_method=args.threshold_method)
 
         ppm_df = None
         valid_regions = None

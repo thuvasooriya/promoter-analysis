@@ -1,0 +1,17 @@
+{
+  "threshold_method": "mean_minus_2std",
+  "test_regions": 1000,
+  "promoters_detected": 0,
+  "detection_rate": 0.0,
+  "threshold": -1.815790179450281,
+  "threshold_statistics": {
+    "method": "mean_minus_2std",
+    "threshold": -1.815790179450281,
+    "training_mean": -0.7191947816811964,
+    "training_median": -0.7084988745892598,
+    "training_std": 0.5482976988845424,
+    "training_min": -1.9540874555999435,
+    "training_max": 0.0,
+    "training_count": 99
+  }
+}

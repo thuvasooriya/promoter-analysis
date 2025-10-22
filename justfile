@@ -10,9 +10,17 @@ setup:
 task-1: setup
     uv run python src/main.py --task 1
 
-# run task 2 (statistical alignment)
+# run task 2 (statistical alignment with empirical threshold)
 task-2: setup
-    uv run python src/main.py --task 2
+    uv run python src/main.py --task 2 --threshold-method empirical
+
+# run task 2 with consensus threshold
+task-2-consensus: setup
+    uv run python src/main.py --task 2 --threshold-method consensus
+
+# compare both threshold methods
+compare-thresholds: task-2 task-2-consensus
+    uv run python src/threshold_comparison.py
 
 # run task 3 (cross-validation)
 task-3: setup

@@ -2,61 +2,61 @@
   "210079K": {
     "genome_id": "GCA_001457635.1",
     "total_regions_tested": 1000,
-    "promoters_detected": 313,
-    "detection_rate": 0.313,
+    "promoters_detected": 337,
+    "detection_rate": 0.337,
     "score_statistics": {
-      "mean": -16.482850031493864,
-      "std": 6.730041596230163,
-      "max": -0.48770320634513675,
-      "min": -43.411016806246174
+      "mean": -16.23347337917918,
+      "std": 6.729027897826646,
+      "max": -0.26409759942609634,
+      "min": -43.41329309454426
     }
   },
   "210179R": {
     "genome_id": "GCA_019048645.1",
     "total_regions_tested": 1000,
-    "promoters_detected": 365,
-    "detection_rate": 0.365,
+    "promoters_detected": 389,
+    "detection_rate": 0.389,
     "score_statistics": {
-      "mean": -15.299571110253678,
-      "std": 6.70228100148583,
-      "max": -0.32558435686870135,
-      "min": -43.54204506865258
+      "mean": -15.034571656832282,
+      "std": 6.733390911398034,
+      "max": 0.0,
+      "min": -43.43434207205107
     }
   },
   "210504L": {
     "genome_id": "GCA_900636475.1",
     "total_regions_tested": 1000,
-    "promoters_detected": 325,
-    "detection_rate": 0.325,
+    "promoters_detected": 349,
+    "detection_rate": 0.349,
     "score_statistics": {
-      "mean": -16.18148434864637,
-      "std": 6.416153891435462,
-      "max": -0.32558435686870135,
-      "min": -35.1949287076129
+      "mean": -15.927446822951483,
+      "std": 6.4284296623073045,
+      "max": -0.1416218108323375,
+      "min": -35.28146830953628
     }
   },
   "210707L": {
     "genome_id": "GCA_900475505.1",
     "total_regions_tested": 999,
-    "promoters_detected": 256,
-    "detection_rate": 0.25625625625625625,
+    "promoters_detected": 271,
+    "detection_rate": 0.27127127127127126,
     "score_statistics": {
-      "mean": -17.146074019361304,
-      "std": 6.273336286952399,
-      "max": -1.4383812805287683,
-      "min": -43.19138819703941
+      "mean": -16.88808464443612,
+      "std": 6.298469800139563,
+      "max": -0.7387935080033077,
+      "min": -43.07986055510202
     }
   },
   "210732H": {
     "genome_id": "GCA_019046945.1",
     "total_regions_tested": 1000,
-    "promoters_detected": 345,
-    "detection_rate": 0.345,
+    "promoters_detected": 364,
+    "detection_rate": 0.364,
     "score_statistics": {
-      "mean": -15.881642202495533,
-      "std": 6.699841064383114,
-      "max": -0.32558435686870135,
-      "min": -43.411016806246174
+      "mean": -15.614828652015676,
+      "std": 6.7337561047324,
+      "max": 0.0,
+      "min": -43.41329309454426
     }
   }
 }

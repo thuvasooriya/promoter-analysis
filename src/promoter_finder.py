@@ -11,9 +11,7 @@ from typing import Dict, List, Optional
 class PromoterFinder:
     def __init__(self):
         """Initialize promoter finder for WAWWWT pattern"""
-        # W = A or T pattern as per assignment
         self.w_pattern = "[AT]"
-        self.promoter_pattern = f"{self.w_pattern}{self.w_pattern}{self.w_pattern}{self.w_pattern}{self.w_pattern}T"
         logging.info("Initialized PromoterFinder with WAWWWT pattern")
 
     def has_consecutive_w_bases(self, sequence: str, min_length: int = 6) -> bool:
@@ -29,16 +27,10 @@ class PromoterFinder:
         best_match = None
         best_score = 0
 
-        # Slide 6-base window across 11-base sequence
         for i in range(len(sequence) - 5):
             subseq = sequence[i : i + 6]
 
-            # Score based on W content (A or T)
             w_count = sum(1 for base in subseq if base in "AT")
-
-            # Prefer patterns ending in T (based on WAWWWT)
-            if subseq.endswith("T"):
-                w_count += 0.5
 
             if w_count > best_score:
                 best_score = w_count

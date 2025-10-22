@@ -1,0 +1,17 @@
+{
+  "threshold_method": "otsu",
+  "test_regions": 1000,
+  "promoters_detected": 0,
+  "detection_rate": 0.0,
+  "threshold": -3.9653120774162334,
+  "threshold_statistics": {
+    "method": "otsu",
+    "threshold": -3.9653120774162334,
+    "training_mean": -3.991939061263426,
+    "training_median": -3.900081228425339,
+    "training_std": 0.6835519716918275,
+    "training_min": -5.529094624486273,
+    "training_max": -3.1437139554641838,
+    "training_count": 99
+  }
+}

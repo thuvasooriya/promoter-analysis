@@ -4,25 +4,25 @@ Testing 210657G's PPM on other students' genomes
 
 210079K (GCA_001457635.1):
   Regions tested: 1000
-  Promoters detected: 313
-  Detection rate: 31.30%
+  Promoters detected: 337
+  Detection rate: 33.70%
 
 210179R (GCA_019048645.1):
   Regions tested: 1000
-  Promoters detected: 365
-  Detection rate: 36.50%
+  Promoters detected: 389
+  Detection rate: 38.90%
 
 210504L (GCA_900636475.1):
   Regions tested: 1000
-  Promoters detected: 325
-  Detection rate: 32.50%
+  Promoters detected: 349
+  Detection rate: 34.90%
 
 210707L (GCA_900475505.1):
   Regions tested: 999
-  Promoters detected: 256
-  Detection rate: 25.63%
+  Promoters detected: 271
+  Detection rate: 27.13%
 
 210732H (GCA_019046945.1):
   Regions tested: 1000
-  Promoters detected: 345
-  Detection rate: 34.50%
+  Promoters detected: 364
+  Detection rate: 36.40%

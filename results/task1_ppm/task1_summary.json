@@ -8,6 +8,6 @@
   "training_size": 100,
   "training_unique_genes": 99,
   "promoters_found": 99,
-  "consensus_sequence": "TATAAT",
-  "consensus_score": -3.1437139554641838
+  "consensus_sequence": "AAAAAA",
+  "consensus_score": -3.3142913664749876
 }
