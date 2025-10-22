@@ -13,7 +13,7 @@ from scoring import SequenceScorer
 
 
 class PPMBuilder:
-    def __init__(self, pseudocount: float = 0.01, filter_mode: str = "consecutive_w"):
+    def __init__(self, pseudocount: float = 0.01, filter_mode: str = "wawwwt"):
         """Initialize PPM builder with pseudocount for all bases
 
         Args:

@@ -1,7 +1,0 @@
-{
-  "threshold_method": "empirical",
-  "test_regions": 1000,
-  "promoters_detected": 126,
-  "detection_rate": 0.126,
-  "threshold": -10.0
-}

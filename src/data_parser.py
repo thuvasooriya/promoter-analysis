@@ -10,9 +10,21 @@ from pathlib import Path
 import numpy as np
 from Bio import SeqIO
 
+DEFAULT_STUDENT_ID = "210657G"
+DEFAULT_GENOME_ID = "GCA_900637025.1"
+FASTA_PATTERNS = [
+    "_46338_H01_genomic.fna",
+    "_NCTC7465_genomic.fna",
+    "_ASM1904864v1_genomic.fna",
+    "_42197_F01_genomic.fna",
+    "_42925_G01_genomic.fna",
+    "_ASM1904694v1_genomic.fna",
+]
+FASTA_PATTERN_INDEX = 0
+
 
 class GenomeParser:
-    def __init__(self, genome_id="GCA_900637025.1", student_id="210657G"):
+    def __init__(self, genome_id=DEFAULT_GENOME_ID, student_id=DEFAULT_STUDENT_ID):
         """Initialize parser with genome ID and student ID"""
         self.genome_id = genome_id
         self.student_id = student_id
@@ -30,14 +42,7 @@ class GenomeParser:
 
     def _find_fasta_file(self):
         """Find the FASTA file with correct naming pattern"""
-        patterns = [
-            f"{self.genome_id}_46338_H01_genomic.fna",
-            f"{self.genome_id}_NCTC7465_genomic.fna",
-            f"{self.genome_id}_ASM1904864v1_genomic.fna",
-            f"{self.genome_id}_42197_F01_genomic.fna",
-            f"{self.genome_id}_42925_G01_genomic.fna",
-            f"{self.genome_id}_ASM1904694v1_genomic.fna",
-        ]
+        patterns = [f"{self.genome_id}{pattern}" for pattern in FASTA_PATTERNS]
 
         for pattern in patterns:
             candidate = self.data_dir / pattern
@@ -46,7 +51,7 @@ class GenomeParser:
 
         fna_files = list(self.data_dir.glob("*.fna"))
         if fna_files:
-            return fna_files[0]
+            return fna_files[FASTA_PATTERN_INDEX]
 
         raise FileNotFoundError(f"No FASTA file found in {self.data_dir}")
 

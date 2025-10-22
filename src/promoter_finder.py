@@ -9,9 +9,9 @@ from typing import Dict, List, Optional
 
 
 class PromoterFinder:
-    def __init__(self, filter_mode: str = "consecutive_w"):
+    def __init__(self, filter_mode: str = "wawwwt"):
         """Initialize promoter finder for WAWWWT pattern
-        
+
         Args:
             filter_mode: "consecutive_w" for WWWWWW pattern (default)
                         "wawwwt" for strict WAWWWT pattern matching
@@ -24,7 +24,7 @@ class PromoterFinder:
         """Check if sequence has at least 6 consecutive W (A or T) bases"""
         consecutive_w = re.search(f"[AT]{{{min_length},}}", sequence)
         return consecutive_w is not None
-    
+
     def has_wawwwt_pattern(self, sequence: str) -> bool:
         """Check if sequence contains WAWWWT pattern: W-A-W-W-W-T"""
         wawwwt_pattern = re.search(r"[AT]A[AT][AT][AT]T", sequence)
@@ -102,7 +102,11 @@ class PromoterFinder:
         candidates.sort(key=lambda x: x["score"], reverse=True)
         promoters = candidates[:sample_size]
 
-        filter_desc = "6 consecutive Ws" if self.filter_mode == "consecutive_w" else "WAWWWT pattern"
+        filter_desc = (
+            "6 consecutive Ws"
+            if self.filter_mode == "consecutive_w"
+            else "WAWWWT pattern"
+        )
         logging.info(f"Found {len(candidates)} candidates with {filter_desc}")
         logging.info(f"Selected top {len(promoters)} promoters for training")
         return promoters

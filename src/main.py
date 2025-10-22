@@ -21,17 +21,24 @@ from ppm_builder import PPMBuilder
 from promoter_finder import PromoterFinder
 from statistical_alignment import StatisticalAligner
 
+DEFAULT_STUDENT_ID = "210657G"
+DEFAULT_GENOME_ID = "GCA_900637025.1"
+DEFAULT_THRESHOLD_METHOD = "empirical"
+DEFAULT_FILTER_MODE = "wawwwt"
+GENOME_FASTA_SUFFIX = "_46338_H01_genomic.fna"
+DATA_PATH_INDEX = 0
+
 
 class BM4322Analysis:
     def __init__(
         self,
-        genome_id="GCA_900637025.1",
-        student_id="210657G",
-        threshold_method="empirical",
-        filter_mode="consecutive_w",
+        genome_id=DEFAULT_GENOME_ID,
+        student_id=DEFAULT_STUDENT_ID,
+        threshold_method=DEFAULT_THRESHOLD_METHOD,
+        filter_mode=DEFAULT_FILTER_MODE,
     ):
         """Initialize analysis for specific genome and student
-        
+
         Args:
             genome_id: genome accession ID
             student_id: student identifier
@@ -54,10 +61,10 @@ class BM4322Analysis:
             self.task2_dir = Path("results/task2_consensus")
         else:
             self.task2_dir = Path(f"results/task2_advanced_{threshold_method}")
-        
+
         if filter_mode == "wawwwt":
-            self.task1_dir = Path(f"results/task1_ppm")
-            self.task2_dir = Path(f"results/task2_alignment")
+            self.task1_dir = Path("results/task1_ppm")
+            self.task2_dir = Path("results/task2_alignment")
             self.task3_dir = Path("results/task3_cross_validation")
         self.logs_dir = Path("logs")
 
@@ -381,9 +388,7 @@ class BM4322Analysis:
     def _test_ppm_on_student_data(self, target_student_id, target_genome_id, ppm):
         """Test PPM on another student's genome data"""
         temp_analysis = BM4322Analysis(
-            target_genome_id, 
-            target_student_id,
-            filter_mode=self.filter_mode
+            target_genome_id, target_student_id, filter_mode=self.filter_mode
         )
 
         parser = GenomeParser(target_genome_id, target_student_id)
@@ -426,11 +431,11 @@ class BM4322Analysis:
         }
 
 
-def verify_data_structure(student_id="210657G", genome_id="GCA_900637025.1"):
+def verify_data_structure(student_id=DEFAULT_STUDENT_ID, genome_id=DEFAULT_GENOME_ID):
     """Verify required data files exist"""
     data_dir = Path("data") / f"{student_id}_{genome_id}" / genome_id
     required_files = [
-        data_dir / f"{genome_id}_46338_H01_genomic.fna",
+        data_dir / f"{genome_id}{GENOME_FASTA_SUFFIX}",
         data_dir / "genomic.gff",
     ]
 
@@ -441,7 +446,7 @@ def verify_data_structure(student_id="210657G", genome_id="GCA_900637025.1"):
             print(f"  - {f}")
         print("\nExpected structure:")
         print(f"  data/{student_id}_{genome_id}/{genome_id}/")
-        print(f"    ├── {genome_id}_46338_H01_genomic.fna")
+        print(f"    ├── {genome_id}{GENOME_FASTA_SUFFIX}")
         print("    └── genomic.gff")
         return False
     return True
@@ -449,12 +454,12 @@ def verify_data_structure(student_id="210657G", genome_id="GCA_900637025.1"):
 
 def main():
     print("BM4322 Genomic Signal Processing Assignment")
-    print("Student ID: 210657G")
-    print("Genome: GCA_900637025.1")
+    print(f"Student ID: {DEFAULT_STUDENT_ID}")
+    print(f"Genome: {DEFAULT_GENOME_ID}")
     print("=" * 50)
 
-    student_id = "210657G"
-    genome_id = "GCA_900637025.1"
+    student_id = DEFAULT_STUDENT_ID
+    genome_id = DEFAULT_GENOME_ID
 
     if not verify_data_structure(student_id, genome_id):
         return 1
@@ -478,21 +483,20 @@ def main():
             "iqr",
             "mad",
         ],
-        default="empirical",
-        help="Threshold calculation method for Task 2 (default: empirical at -10.0)",
+        default=DEFAULT_THRESHOLD_METHOD,
+        help=f"Threshold calculation method for Task 2 (default: {DEFAULT_THRESHOLD_METHOD} at -10.0)",
     )
     parser.add_argument(
         "--filter-mode",
         choices=["consecutive_w", "wawwwt"],
-        default="consecutive_w",
-        help="Promoter filtering mode: consecutive_w (WWWWWW) or wawwwt (WAWWWT pattern)",
+        default=DEFAULT_FILTER_MODE,
+        help=f"Promoter filtering mode: consecutive_w (WWWWWW) or wawwwt (WAWWWT pattern) (default: {DEFAULT_FILTER_MODE})",
     )
     args = parser.parse_args()
 
     try:
         analysis = BM4322Analysis(
-            threshold_method=args.threshold_method,
-            filter_mode=args.filter_mode
+            threshold_method=args.threshold_method, filter_mode=args.filter_mode
         )
 
         ppm_df = None

@@ -25,11 +25,11 @@
 
 = Introduction
 
-This report presents a computational analysis of bacterial promoter sequences using *statistical gene prediction* methods. Based on Liu et al. (2011), the $sigma^(70)$ subunit of bacterial RNA polymerase recognizes promoters following the `WAWWWT` pattern (where W = A or T) located approximately 10 bases upstream of gene start sites, corresponding to the *Pribnow Box* or *-10 box*.
+This report presents a computational analysis of bacterial promoter sequences using *statistical gene prediction* methods. Based on Liu et al. (2011), the $sigma^(70)$ subunit of bacterial RNA polymerase recognizes promoters following the `WAWWWT` pattern located approximately 10 bases upstream of gene start sites, corresponding to the *Pribnow Box* or *-10 box*.
 
 = Genome Information
 
-- *Organism:* _Streptococcus pyogenes_ M1 476
+- *Organism:* _Streptococcus pyogenes_
 - *Accession:* GCA_900637025.1
 - *Genome Size:* 1,931,548 bp
 - *Total Genes:* 1,100 annotated genes
@@ -37,7 +37,7 @@ This report presents a computational analysis of bacterial promoter sequences us
 
 = Objectives
 
-+ Construct a _Position Probability Matrix (PPM)_ from promoter sequences matching the WAWWWT pattern (6 bases each, where W = A or T) extracted from 1100 genes' upstream regions (-15 to -5 bp relative to start codon)
++ Construct a _Position Probability Matrix (PPM)_ from promoter sequences matching the `WAWWWT` pattern extracted from 1100 genes' upstream regions (-15 to -5 bp relative to start codon)
 + Perform _statistical alignment_ on the remaining upstream regions using the PPM, computing log probability scores to detect promoter presence/absence based on an empirical threshold
 + Cross-validate the PPM generalizability by applying it to 1000 upstream regions from five other bacterial genomes assigned to classmates
 
@@ -57,11 +57,8 @@ Extracted regions 15 to 5 bases upstream of gene start positions:
 
 Pattern matching for canonical Pribnow box:
 
-+ Filter sequences matching WAWWWT pattern: [AT]A[AT][AT][AT]T
++ Filter sequences matching WAWWWT pattern: `[AT]A[AT][AT][AT]T`
 + Extract all 6-base windows from each 11-base upstream region using sliding window
-+ Accept only sequences strictly matching the pattern (positions 2 and 6 must be A and T respectively, other W positions can be A or T)
-+ This yields training sequences closely resembling the canonical TATAAT motif
-+ Pattern-based filtering ensures biological relevance and reduces noise from non-promoter sequences
 
 === Position Frequency Table Construction
 
@@ -164,30 +161,24 @@ Cross-validation tests PPM generalizability across different genomes. The PPM tr
 - `src/cross_validation.py` - Multi-genome validation
 - `src/visualizations.py` - Figures and sequence logos
 
+=== Code Availability
+
+Complete analysis pipeline and reproducible code available at #link("https://github.com/thuvasooriya/promoter-analysis")
+
 = Results
 
 == Task 1: Position Probability Matrix
 
-=== Training Set Characteristics
-
-- Upstream regions screened: 1100 genes
-- Sequences matching WAWWWT pattern [AT]A[AT][AT][AT]T: 42
-- Training sequences extracted: 42 unique genes
-- AT-richness: 100% (all sequences contain only A and T, conforming to WAWWWT pattern requirement)
-- Sequence length: 6 bases (positions 1-6)
-
 #figure(
   image("assets/figures/training_data_analysis.png", width: 90%),
-  caption: [Training data showing 42 promoter sequences matching WAWWWT pattern. Position 2 (99.9% A) and position 6 (99.9% T) exhibit near-perfect conservation, confirming canonical TATAAT Pribnow box structure. Positions 1, 3, 4, 5 show AT variation consistent with W (A or T) positions. All G/C probabilities derive from pseudocounts only.],
+  caption: [Training data showing 42 promoter sequences matching `WAWWWT` pattern. Position 2 (99.9% A) and position 6 (99.9% T) exhibit near-perfect conservation, confirming canonical `TATAAT` Pribnow box structure. Positions 1, 3, 4, 5 show AT variation consistent with W (A or T) positions. All G/C probabilities derive from pseudocounts only.],
 )
 
 === Consensus Sequence
 
-The consensus sequence (highest probability base at each position):
+#align(center, [*`TATAAT`*])
 
-*TATAAT*
-
-This matches the canonical bacterial *Pribnow Box*, confirming successful identification of biologically relevant promoter sequences. The TATAAT consensus represents the prototypical $sigma^(70)$ recognition motif for RNA polymerase binding.
+This matches the canonical bacterial *Pribnow Box*, confirming successful identification of biologically relevant promoter sequences. The `TATAAT` consensus represents the prototypical $sigma^(70)$ recognition motif for RNA polymerase binding.
 
 === Consensus Score
 
@@ -195,29 +186,31 @@ $
   S_("consensus") = log(0.262 times 0.999 times 0.452 times 0.785 times 0.785 times 0.999) = -1.392
 $
 
-This benchmark score represents a high-quality TATAAT promoter under this PPM model.
+This benchmark score represents a high-quality `TATAAT` promoter under this PPM model.
 
 === Position Probability Matrix
 
 #figure(
   image("assets/figures/ppm_heatmap.png", width: 70%),
-  caption: [Position Probability Matrix heatmap showing base probabilities at each position. Constructed from 42 training sequences matching WAWWWT pattern. Position 2 (99.9% A) and position 6 (99.9% T) show near-complete conservation defining the canonical TATAAT motif. C and G probabilities derive from pseudocounts only ($k = 0.01$, shown as near-zero values).],
+  caption: [Position Probability Matrix heatmap showing base probabilities at each position. Constructed from 42 training sequences matching `WAWWWT` pattern. Position 2 (99.9% A) and position 6 (99.9% T) show near-complete conservation defining the canonical `TATAAT` motif. C and G probabilities derive from pseudocounts only ($k = 0.01$, shown as near-zero values).],
 )
 
 === Sequence Logo Visualization
 
 #figure(
   image("assets/figures/sequence_logo.png", width: 90%),
-  caption: [Sequence logo representation of the PPM. Letter heights are proportional to probability. Positions 2 and 6 show near-complete conservation (A and T respectively, 99.9% each), defining the canonical TATAAT Pribnow box. Positions 1, 3, 4, 5 show AT variation reflecting the W (weak base pair) positions, allowing functional flexibility while maintaining DNA melting capability for transcription initiation.],
+  caption: [Sequence logo representation of the PPM. Letter heights are proportional to probability. Positions 2 and 6 show near-complete conservation (A and T respectively, 99.9% each), defining the canonical `TATAAT` Pribnow box. Positions 1, 3, 4, 5 show AT variation reflecting the W (weak base pair) positions, allowing functional flexibility while maintaining DNA melting capability for transcription initiation.],
 )
+
+#pagebreak()
 
 == Task 2: Statistical Alignment Results
 
-=== Detection Performance (Test Set: 1000 Non-overlapping Regions)
+=== Detection Performance
 
-Using empirical threshold (-10.0) on 1000 upstream regions (excluding 42 training genes):
+Using empirical threshold (-10.0) on 1000 upstream regions
 
-- Test sequences analyzed: 1000 upstream regions (non-overlapping with training)
+- Test sequences analyzed: 1000 upstream regions
 - Promoters detected (Score > -10.0): 126 (12.6%)
 - Non-promoters (Score ≤ -10.0): 874 (87.4%)
 - Classification threshold: -10.0 (empirical)
@@ -232,7 +225,7 @@ Using empirical threshold (-10.0) on 1000 upstream regions (excluding 42 trainin
     [Test (1000)], [-19.0 ± 6.2], [[-40.6, -7.7]],
     [Background], [-20.0 ± 10.0], [[-52.0, 0.0]],
   ),
-  caption: [Score distributions showing clear separation between training promoters (near-perfect TATAAT matches scoring ~0), test regions (intermediate), and random background (low)],
+  caption: [Score distributions showing clear separation between training promoters (near-perfect `TATAAT` matches scoring ~0), test regions (intermediate), and random background (low)],
 )
 
 #figure(
@@ -515,6 +508,3 @@ The analysis validates that successful promoter detection requires:
 
 The perfect match between computed consensus (TATAAT) and canonical Pribnow box demonstrates that *pattern-based filtering combined with statistical modeling successfully captures authentic biological signals*.
 
-= Appendix
-
-*Code Availability:* Complete analysis pipeline and reproducible code available at #link("https://github.com/thuvasooriya/promoter-analysis")

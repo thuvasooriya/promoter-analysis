@@ -27,7 +27,7 @@ task-3: setup
     uv run python src/main.py --task 3
 
 # run complete analysis (all tasks)
-all: setup visualize
+task-all: setup
     uv run python src/main.py --task all
 
 # generate visualizations
@@ -36,6 +36,8 @@ visualize:
 
 report:
     cd report && typst compile gsp.typ 210657G-a1.pdf
+
+all: setup task-all visualize report
 
 report-w:
     cd report && typst watch gsp.typ 210657G-a1.pdf

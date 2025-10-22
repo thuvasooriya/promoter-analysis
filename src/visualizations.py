@@ -153,12 +153,12 @@ class PromoterVisualizer:
         ax2.set_title("Score Comparison - Box Plot", fontsize=13, fontweight="bold")
         ax2.grid(axis="y", alpha=0.3)
 
-        plt.suptitle(
-            f"Statistical Alignment Results (n={len(self.results_df)})",
-            fontsize=14,
-            fontweight="bold",
-            y=1.02,
-        )
+        # plt.suptitle(
+        #     f"Statistical Alignment Results (n={len(self.results_df)})",
+        #     fontsize=14,
+        #     fontweight="bold",
+        #     y=1.02,
+        # )
         plt.tight_layout()
         plt.savefig(
             self.figures_dir / "score_distributions.png", dpi=300, bbox_inches="tight"

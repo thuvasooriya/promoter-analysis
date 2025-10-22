@@ -10,9 +10,9 @@ import pandas as pd
 
 
 class SequenceScorer:
-    def __init__(self, ppm_df: pd.DataFrame, filter_mode: str = "consecutive_w"):
+    def __init__(self, ppm_df: pd.DataFrame, filter_mode: str = "wawwwt"):
         """Initialize scorer with Position Probability Matrix
-        
+
         Args:
             ppm_df: Position Probability Matrix DataFrame
             filter_mode: "consecutive_w" or "wawwwt" (for logging/tracking)
@@ -22,7 +22,9 @@ class SequenceScorer:
         self.bases = ["A", "C", "G", "T"]
         self.filter_mode = filter_mode
         self.consensus_score = self.calculate_consensus_score()
-        logging.info(f"Initialized SequenceScorer with PPM of length {self.ppm_length}, filter_mode={filter_mode}")
+        logging.info(
+            f"Initialized SequenceScorer with PPM of length {self.ppm_length}, filter_mode={filter_mode}"
+        )
 
     def calculate_consensus_score(self) -> float:
         """Calculate consensus sequence benchmark score"""
@@ -43,11 +45,11 @@ class SequenceScorer:
     def score_sequence(self, sequence: str, normalize: bool = True) -> float:
         """
         Score a sequence using PPM
-        
+
         Args:
             sequence: DNA sequence to score
             normalize: If True, subtract consensus score (default)
-        
+
         Returns:
             Log-probability score (normalized if normalize=True)
         """
@@ -73,14 +75,16 @@ class SequenceScorer:
         else:
             return log_score
 
-    def score_sequences(self, sequences: List[str], normalize: bool = True) -> List[float]:
+    def score_sequences(
+        self, sequences: List[str], normalize: bool = True
+    ) -> List[float]:
         """Score multiple sequences"""
         return [self.score_sequence(seq, normalize) for seq in sequences]
 
     def sliding_window_score(self, sequence: str, normalize: bool = True) -> List[dict]:
         """
         Perform sliding window analysis on longer sequence
-        
+
         Returns:
             List of dicts with keys: position, sequence, score
         """
